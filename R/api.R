@@ -53,7 +53,7 @@ guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to
       #adding the result into a data frame
       df <- data.frame(js$response)
       #removing results. from the column names
-      colnames(df) <-str_replace_all(colnames(df),"results.","")
+      colnames(df) <-stringr::str_replace_all(colnames(df),"results.","")
       df <- df%>%separate(webPublicationDate,sep="T",c("PublicationDate","PublicationTime"))%>%mutate(PublicationDate = as.Date(PublicationDate),PublicationTime= substr(PublicationTime,0,5))
       #appending the result to a dataframe
       df2 <- rbind(df2,df)
@@ -80,7 +80,7 @@ full_guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=1
     body<-html_artical%>%rvest::html_element(".dcr-i7zira")%>%rvest::html_text2()
     #tags of the article
     tags<-html_artical%>%rvest::html_element(".dcr-1nx1rmt")%>%rvest::html_text2()
-    tags<-str_replace_all(tags,"\\n",", ")
+    tags<-stringr::str_replace_all(tags,"\\n",", ")
 
     #appending all the results into the data frame
     articals <- rbind(articals,data.frame(webUrl = article_link,author = author,SubTitle = subtitle,article_text = body,tags= tags))
