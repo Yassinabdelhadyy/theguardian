@@ -31,14 +31,19 @@ guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to
     page <- paste0("page=",page_numbers,"&")
     theguardian <- paste0(base_link,to_date,from_date,orderby,page,page_size,api_key)
     #reading the html page of the result
-    text <- rvest::read_html(theguardian)%>%rvest::html_element("body")%>%rvest::html_element("p")%>%rvest::html_text2()
+    text <- rvest::read_html(theguardian)|>
+      rvest::html_element("body")|>
+      rvest::html_element("p")|>
+      rvest::html_text2()
     #transforming the page from text to json format
     js <- jsonlite::fromJSON(text, simplifyDataFrame = TRUE)
     #adding the result into a data frame
     df <- data.frame(js$response)
     #removing results. from the column names
     colnames(df) <-str_replace_all(colnames(df),"results.","")
-    df <- df%>%separate(webPublicationDate,sep="T",c("PublicationDate","PublicationTime"))%>%mutate(PublicationDate = as.Date(PublicationDate),PublicationTime= substr(PublicationTime,0,5))
+    df <- df|>
+      separate(webPublicationDate,sep="T",c("PublicationDate","PublicationTime"))|>
+      mutate(PublicationDate = as.Date(PublicationDate),PublicationTime= substr(PublicationTime,0,5))
 
     return(df)
 
@@ -50,14 +55,19 @@ guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to
       #adding the link with the api key
       theguardian <- paste0(base_link,to_date,from_date,orderby,page_nm,page_size,api_key)
       #reading the html page of the result
-      text <- rvest::read_html(theguardian)%>%rvest::html_element("body")%>%rvest::html_element("p")%>%rvest::html_text2()
+      text <- rvest::read_html(theguardian)|>
+        rvest::html_element("body")|>
+        rvest::html_element("p")|>
+        rvest::html_text2()
       #transforming the page from text to json format
       js <- jsonlite::fromJSON(text, simplifyDataFrame = TRUE)
       #adding the result into a data frame
       df <- data.frame(js$response)
       #removing results. from the column names
       colnames(df) <-stringr::str_replace_all(colnames(df),"results.","")
-      df <- df%>%separate(webPublicationDate,sep="T",c("PublicationDate","PublicationTime"))%>%mutate(PublicationDate = as.Date(PublicationDate),PublicationTime= substr(PublicationTime,0,5))
+      df <- df|>
+        separate(webPublicationDate,sep="T",c("PublicationDate","PublicationTime"))|>
+        mutate(PublicationDate = as.Date(PublicationDate),PublicationTime= substr(PublicationTime,0,5))
       #appending the result to a dataframe
       df2 <- rbind(df2,df)
     }
@@ -81,7 +91,7 @@ guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to
 
 
 full_guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to_date = to, from_date=from,loop=FALSE){
-  df <- guardian_call #guardian_call(orderby,page_numbers,page_size,to_date,from_date,loop)
+  df <- guardian_call(orderby,page_numbers,page_size,to_date,from_date,loop)
   articals <-data.frame()
 
   for(link in 1:nrow(df)){
@@ -90,19 +100,28 @@ full_guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=1
     #reading html page of the article
     html_artical <- rvest::read_html(article_link)
     #article subtitle
-    subtitle<-html_artical%>% rvest::html_element("p")%>%rvest::html_text2()
+    subtitle<-html_artical|>
+      rvest::html_element("p")|>
+      rvest::html_text2()
     #article author
-    author<-html_artical%>%rvest::html_element("address")%>%rvest::html_text2()
+    author<-html_artical|>
+      rvest::html_element("address")|>
+      rvest::html_text2()
     #article body
-    body<-html_artical%>%rvest::html_element(".dcr-i7zira")%>%rvest::html_text2()
+    body<-html_artical|>
+      rvest::html_element(".dcr-i7zira")|>
+      rvest::html_text2()
     #tags of the article
-    tags<-html_artical%>%rvest::html_element(".dcr-1nx1rmt")%>%rvest::html_text2()
+    tags<-html_artical|>
+      rvest::html_element(".dcr-1nx1rmt")|>
+      rvest::html_text2()
     tags<-stringr::str_replace_all(tags,"\\n",", ")
 
     #appending all the results into the data frame
     articals <- rbind(articals,data.frame(webUrl = article_link,author = author,SubTitle = subtitle,article_text = body,tags= tags))
   }
-  df2 <- df%>%left_join(.,articals,by = "webUrl")
+  df2 <- df|>
+    left_join(.,articals,by = "webUrl")
 
   return(df2)
 }
