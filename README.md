@@ -4,6 +4,8 @@
 # theguardian
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/Yassinabdelhadyy/theguardian/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/Yassinabdelhadyy/theguardian/actions/workflows/check-standard.yaml)
 <!-- badges: end -->
 
 The goal of theguardian is to …
