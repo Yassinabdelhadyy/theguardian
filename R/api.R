@@ -1,20 +1,23 @@
-# Hello, world!
-#
-# This is an example function named 'hello'
-# which prints 'Hello, world!'.
-#
-# You can learn more about package authoring with RStudio at:
-#
-#   http://r-pkgs.had.co.nz/
-#
-# Some useful keyboard shortcuts for package authoring:
-#
-#   Install Package:           'Ctrl + Shift + B'
-#   Check Package:             'Ctrl + Shift + E'
-#   Test Package:              'Ctrl + Shift + T'
+library(magrittr)
+
+to <- Sys.Date()
+from <- Sys.Date()-7
+
+##' The Guardian call
+##'
+##' This function retrieve the data from the guardian API
+##'
+##'
+##'
+##' @return the data from the guardian
+##' @author Yassin Abdelhady
+##' @export
+##'
+##' @examples
+##' guardian_call()
 
 
-guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to_date = Sys.Date(), from_date=Sys.Date()-7,loop=FALSE){
+guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to_date = to, from_date=from,loop=FALSE){
 
   base_link<-Sys.getenv("link_base")
   api_key<-Sys.getenv("GUARDIAN_API_KEY")
@@ -28,7 +31,7 @@ guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to
     page <- paste0("page=",page_numbers,"&")
     theguardian <- paste0(base_link,to_date,from_date,orderby,page,page_size,api_key)
     #reading the html page of the result
-    text <- rvest::read_html(theguardian)%>%html_element("body")%>%html_element("p")%>%html_text2()
+    text <- rvest::read_html(theguardian)%>%rvest::html_element("body")%>%rvest::html_element("p")%>%rvest::html_text2()
     #transforming the page from text to json format
     js <- jsonlite::fromJSON(text, simplifyDataFrame = TRUE)
     #adding the result into a data frame
@@ -63,8 +66,22 @@ guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to
 }
 
 
-full_guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to_date = Sys.Date(), from_date=Sys.Date()-7,loop=FALSE){
-  df <- guardian_call(orderby,page_numbers,page_size,to_date,from_date,loop)
+##' The Guardian call
+##'
+##' This function retrieve the data from the guardian API plus the body and the tags of the article
+##'
+##'
+##'
+##' @return the full data from the guardian
+##' @author Yassin Abdelhady
+##' @export
+##'
+##' @examples
+##' full_guardian_call()
+
+
+full_guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to_date = to, from_date=from,loop=FALSE){
+  df <- guardian_call #guardian_call(orderby,page_numbers,page_size,to_date,from_date,loop)
   articals <-data.frame()
 
   for(link in 1:nrow(df)){
@@ -73,7 +90,7 @@ full_guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=1
     #reading html page of the article
     html_artical <- rvest::read_html(article_link)
     #article subtitle
-    subtitle<-html_artical%>%rvest::html_element("p")%>%rvest::html_text2()
+    subtitle<-html_artical%>% rvest::html_element("p")%>%rvest::html_text2()
     #article author
     author<-html_artical%>%rvest::html_element("address")%>%rvest::html_text2()
     #article body

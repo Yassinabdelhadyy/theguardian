@@ -1,26 +1,39 @@
-# Hello, world!
-#
-# This is an example function named 'hello'
-# which prints 'Hello, world!'.
-#
-# You can learn more about package authoring with RStudio at:
-#
-#   http://r-pkgs.had.co.nz/
-#
-# Some useful keyboard shortcuts for package authoring:
-#
-#   Install Package:           'Ctrl + Shift + B'
-#   Check Package:             'Ctrl + Shift + E'
-#   Test Package:              'Ctrl + Shift + T'
 
 Sys.setenv(link_base = "https://content.guardianapis.com/search?")
 
+
+##' Authentication
+##'
+##' This function check if you are authorized or not
+##'
+##'
+##'
+##' @return if you are authentication
+##' @author Yassin Abdelhady
+##' @export
+##'
+##' @examples
+##' auth_me()
 
 auth_me <- function(){
   key <- Sys.getenv("GUARDIAN_API_KEY")
   assertthat::assert_that(!missing(key), msg = "Sign Up for an API key here https://open-platform.theguardian.com/access then use the function guardian_key('') to set your API Key ")
   print("You have your API Key set")
 }
+
+##' The Guardian API key
+##'
+##' This function retrive your API key
+##'
+##'
+##'
+##' @return show your API key
+##' @author Yassin Abdelhady
+##' @export
+##'
+##' @examples
+##' show_my_key()
+
 
 show_my_key <- function(){
   key <- Sys.getenv("GUARDIAN_API_KEY")
@@ -29,7 +42,18 @@ show_my_key <- function(){
 }
 
 
-
+##' Set the Guardian API key
+##'
+##' This function sets your API key
+##'
+##'
+##'
+##' @return set your API key
+##' @author Yassin Abdelhady
+##' @export
+##'
+##' @examples
+##' guardian_key()
 
 # api_key <- paste("api-key=",rjson::fromJSON(file ="../credentials/theguardiankey.json")$api_key,sep="")
 guardian_key <- function(key){
