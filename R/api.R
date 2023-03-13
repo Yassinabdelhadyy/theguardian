@@ -13,12 +13,6 @@
 #   Check Package:             'Ctrl + Shift + E'
 #   Test Package:              'Ctrl + Shift + T'
 
-library(rvest)
-library(tidyverse)
-library(jsonlite)
-library(rjson)
-library(stringr)
-
 
 guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to_date = Sys.Date(), from_date=Sys.Date()-7,loop=FALSE){
 
@@ -34,7 +28,7 @@ guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to
     page <- paste0("page=",page_numbers,"&")
     theguardian <- paste0(base_link,to_date,from_date,orderby,page,page_size,api_key)
     #reading the html page of the result
-    text <- read_html(theguardian)%>%html_element("body")%>%html_element("p")%>%html_text2()
+    text <- rvest::read_html(theguardian)%>%html_element("body")%>%html_element("p")%>%html_text2()
     #transforming the page from text to json format
     js <- jsonlite::fromJSON(text, simplifyDataFrame = TRUE)
     #adding the result into a data frame
@@ -53,7 +47,7 @@ guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to
       #adding the link with the api key
       theguardian <- paste0(base_link,to_date,from_date,orderby,page_nm,page_size,api_key)
       #reading the html page of the result
-      text <- read_html(theguardian)%>%html_element("body")%>%html_element("p")%>%html_text2()
+      text <- rvest::read_html(theguardian)%>%rvest::html_element("body")%>%rvest::html_element("p")%>%rvest::html_text2()
       #transforming the page from text to json format
       js <- jsonlite::fromJSON(text, simplifyDataFrame = TRUE)
       #adding the result into a data frame
@@ -77,15 +71,15 @@ full_guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=1
     #article link
     article_link <- df$webUrl[link]
     #reading html page of the article
-    html_artical <- read_html(article_link)
+    html_artical <- rvest::read_html(article_link)
     #article subtitle
-    subtitle<-html_artical%>%html_element("p")%>%html_text2()
+    subtitle<-html_artical%>%rvest::html_element("p")%>%rvest::html_text2()
     #article author
-    author<-html_artical%>%html_element("address")%>%html_text2()
+    author<-html_artical%>%rvest::html_element("address")%>%rvest::html_text2()
     #article body
-    body<-html_artical%>%html_element(".dcr-i7zira")%>%html_text2()
+    body<-html_artical%>%rvest::html_element(".dcr-i7zira")%>%rvest::html_text2()
     #tags of the article
-    tags<-html_artical%>%html_element(".dcr-1nx1rmt")%>%html_text2()
+    tags<-html_artical%>%rvest::html_element(".dcr-1nx1rmt")%>%rvest::html_text2()
     tags<-str_replace_all(tags,"\\n",", ")
 
     #appending all the results into the data frame
