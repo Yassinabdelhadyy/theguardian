@@ -1,0 +1,22 @@
+---
+title: "intro_to_theguardian"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{intro_to_theguardian}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(theguardian)
+```
+
+
+will be updated later
