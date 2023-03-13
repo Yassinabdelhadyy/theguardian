@@ -1,0 +1,11 @@
+Package: theguardian
+Title: The Guardian API
+Version: 0.1.0
+Authors@R: 
+    person("Yassin", "Abdelhady", , "yassinabdelhady@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: The Guardian API.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
