@@ -6,6 +6,9 @@
 \usage{
 guardian_key(key)
 }
+\arguments{
+\item{key}{character string containing your API key.}
+}
 \value{
 set your API key
 }
@@ -13,7 +16,7 @@ set your API key
 This function sets your API key
 }
 \examples{
-guardian_key()
+guardian_key("your_api_key_here")
 }
 \author{
 Yassin Abdelhady

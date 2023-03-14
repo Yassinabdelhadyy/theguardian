@@ -5,13 +5,29 @@
 \title{The Guardian call}
 \usage{
 guardian_call(
+  q = NULL,
   orderby = "newest",
   page_numbers = 1,
   page_size = 10,
-  to_date = to,
-  from_date = from,
+  to_date = Sys.Date(),
+  from_date = Sys.Date() - 7,
   loop = FALSE
 )
+}
+\arguments{
+\item{q}{A character string containing the query term.}
+
+\item{orderby}{A character string indicating how the results should be ordered.}
+
+\item{page_numbers}{An integer vector indicating the page numbers to retrieve.}
+
+\item{page_size}{An integer indicating the number of results per page.}
+
+\item{to_date}{A character string indicating the latest date for articles to retrieve.}
+
+\item{from_date}{A character string indicating the earliest date for articles to retrieve.}
+
+\item{loop}{A logical indicating whether to make multiple API calls to retrieve all available results.}
 }
 \value{
 the data from the guardian
@@ -20,7 +36,10 @@ the data from the guardian
 This function retrieve the data from the guardian API
 }
 \examples{
-guardian_call()
+
+\dontrun{
+  guardian_call()
+}
 }
 \author{
 Yassin Abdelhady

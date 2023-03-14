@@ -5,6 +5,7 @@
 \title{The Guardian call}
 \usage{
 full_guardian_call(
+  q = NULL,
   orderby = "newest",
   page_numbers = 1,
   page_size = 10,
@@ -13,6 +14,21 @@ full_guardian_call(
   loop = FALSE
 )
 }
+\arguments{
+\item{q}{A character string containing the query term.}
+
+\item{orderby}{A character string indicating how the results should be ordered.}
+
+\item{page_numbers}{An integer vector indicating the page numbers to retrieve.}
+
+\item{page_size}{An integer indicating the number of results per page.}
+
+\item{to_date}{A character string indicating the latest date for articles to retrieve.}
+
+\item{from_date}{A character string indicating the earliest date for articles to retrieve.}
+
+\item{loop}{A logical indicating whether to make multiple API calls to retrieve all available results.}
+}
 \value{
 the full data from the guardian
 }
@@ -20,7 +36,10 @@ the full data from the guardian
 This function retrieve the data from the guardian API plus the body and the tags of the article
 }
 \examples{
-full_guardian_call()
+
+\dontrun{
+  full_guardian_call()
+}
 }
 \author{
 Yassin Abdelhady

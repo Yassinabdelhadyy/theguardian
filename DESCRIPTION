@@ -1,6 +1,6 @@
 Package: theguardian
 Title: The Guardian API
-Version: 0.1.0
+Version: 0.1.01
 Authors@R: 
     person("Yassin", "Abdelhady", , "yassinabdelhady@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
@@ -15,8 +15,9 @@ Imports:
     rvest,
     jsonlite,
     stringr,
-    magrittr,
-    assertthat
+    assertthat,
+    dplyr,
+    tidyr
 Depends: 
     R (>= 2.10)
 Suggests: 

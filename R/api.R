@@ -1,8 +1,5 @@
-library(magrittr)
-
-to <- Sys.Date()
-from <- Sys.Date()-7
-
+Sys.setenv(link_base = "https://content.guardianapis.com/search?")
+base_link<-"https://content.guardianapis.com/search?"
 ##' The Guardian call
 ##'
 ##' This function retrieve the data from the guardian API
@@ -13,23 +10,34 @@ from <- Sys.Date()-7
 ##' @author Yassin Abdelhady
 ##' @export
 ##'
+##'
+##' @param q A character string containing the query term.
+##' @param orderby A character string indicating how the results should be ordered.
+##' @param page_numbers An integer vector indicating the page numbers to retrieve.
+##' @param page_size An integer indicating the number of results per page.
+##' @param to_date A character string indicating the latest date for articles to retrieve.
+##' @param from_date A character string indicating the earliest date for articles to retrieve.
+##' @param loop A logical indicating whether to make multiple API calls to retrieve all available results.
+##'
+##'
 ##' @examples
-##' guardian_call()
+##'
+##' \dontrun{
+##'   guardian_call()
+##' }
 
 
-guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to_date = to, from_date=from,loop=FALSE){
-
-  base_link<-Sys.getenv("link_base")
+guardian_call <- function(q=NULL,orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to_date = Sys.Date(), from_date=Sys.Date()-7,loop=FALSE){
   api_key<-Sys.getenv("GUARDIAN_API_KEY")
   orderby <- paste0("order-by=",orderby,"&")
   page_size <- paste0("page-size=",page_size,"&")
   from_date <- paste0("from-date=",from_date,"&")
   to_date <- paste0("to-date=",to_date,"&")
-
+  query <- ifelse(!is.null(q),paste0("q='",q,"'&"),"")
 
   if(loop==FALSE){
     page <- paste0("page=",page_numbers,"&")
-    theguardian <- paste0(base_link,to_date,from_date,orderby,page,page_size,api_key)
+    theguardian <- paste0(base_link,query,to_date,from_date,orderby,page,page_size,api_key)
     #reading the html page of the result
     text <- rvest::read_html(theguardian)|>
       rvest::html_element("body")|>
@@ -40,10 +48,10 @@ guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to
     #adding the result into a data frame
     df <- data.frame(js$response)
     #removing results. from the column names
-    colnames(df) <-str_replace_all(colnames(df),"results.","")
+    colnames(df) <- stringr::str_replace_all(colnames(df),"results.","")
     df <- df|>
-      separate(webPublicationDate,sep="T",c("PublicationDate","PublicationTime"))|>
-      mutate(PublicationDate = as.Date(PublicationDate),PublicationTime= substr(PublicationTime,0,5))
+      tidyr::separate(webPublicationDate,sep="T",c("PublicationDate","PublicationTime"))|>
+      dplyr::mutate(PublicationDate = as.Date(PublicationDate),PublicationTime= substr(PublicationTime,0,5))
 
     return(df)
 
@@ -53,7 +61,7 @@ guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to
     for (page_num in 1:page_numbers){
       page_nm <- paste0("page=",page_num,"&")
       #adding the link with the api key
-      theguardian <- paste0(base_link,to_date,from_date,orderby,page_nm,page_size,api_key)
+      theguardian <- paste0(base_link,query,to_date,from_date,orderby,page,page_size,api_key)
       #reading the html page of the result
       text <- rvest::read_html(theguardian)|>
         rvest::html_element("body")|>
@@ -67,7 +75,7 @@ guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to
       colnames(df) <-stringr::str_replace_all(colnames(df),"results.","")
       df <- df|>
         separate(webPublicationDate,sep="T",c("PublicationDate","PublicationTime"))|>
-        mutate(PublicationDate = as.Date(PublicationDate),PublicationTime= substr(PublicationTime,0,5))
+        dplyr::mutate(PublicationDate = as.Date(PublicationDate),PublicationTime= substr(PublicationTime,0,5))
       #appending the result to a dataframe
       df2 <- rbind(df2,df)
     }
@@ -86,12 +94,27 @@ guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to
 ##' @author Yassin Abdelhady
 ##' @export
 ##'
+##'
+##' @param q A character string containing the query term.
+##' @param orderby A character string indicating how the results should be ordered.
+##' @param page_numbers An integer vector indicating the page numbers to retrieve.
+##' @param page_size An integer indicating the number of results per page.
+##' @param to_date A character string indicating the latest date for articles to retrieve.
+##' @param from_date A character string indicating the earliest date for articles to retrieve.
+##' @param loop A logical indicating whether to make multiple API calls to retrieve all available results.
+##'
+##'
+##'
 ##' @examples
-##' full_guardian_call()
+##'
+##' \dontrun{
+##'   full_guardian_call()
+##' }
 
 
-full_guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to_date = to, from_date=from,loop=FALSE){
-  df <- guardian_call(orderby,page_numbers,page_size,to_date,from_date,loop)
+
+full_guardian_call <- function(q=NULL,orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to_date = Sys.Date(), from_date=Sys.Date()-7,loop=FALSE){
+  df <- guardian_call(q,orderby,page_numbers,page_size,to_date,from_date,loop)
   articals <-data.frame()
 
   for(link in 1:nrow(df)){
@@ -121,7 +144,7 @@ full_guardian_call <- function(orderby = "newest" ,page_numbers = 1 ,page_size=1
     articals <- rbind(articals,data.frame(webUrl = article_link,author = author,SubTitle = subtitle,article_text = body,tags= tags))
   }
   df2 <- df|>
-    left_join(.,articals,by = "webUrl")
+    dplyr::left_join(articals,by = "webUrl")
 
   return(df2)
 }

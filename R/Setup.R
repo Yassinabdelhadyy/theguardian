@@ -1,5 +1,4 @@
-
-Sys.setenv(link_base = "https://content.guardianapis.com/search?")
+key = NULL
 
 
 ##' Authentication
@@ -52,8 +51,10 @@ show_my_key <- function(){
 ##' @author Yassin Abdelhady
 ##' @export
 ##'
+##' @param key character string containing your API key.
+##'
 ##' @examples
-##' guardian_key()
+##' guardian_key("your_api_key_here")
 
 # api_key <- paste("api-key=",rjson::fromJSON(file ="../credentials/theguardiankey.json")$api_key,sep="")
 guardian_key <- function(key){
