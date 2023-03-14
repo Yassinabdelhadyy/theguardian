@@ -11,7 +11,7 @@ base_link<-"https://content.guardianapis.com/search?"
 ##' @export
 ##'
 ##'
-##' @param q A character string containing the query term.
+##' @param search_term A character string containing the query term.
 ##' @param orderby A character string indicating how the results should be ordered.
 ##' @param page_numbers An integer vector indicating the page numbers to retrieve.
 ##' @param page_size An integer indicating the number of results per page.
@@ -27,13 +27,13 @@ base_link<-"https://content.guardianapis.com/search?"
 ##' }
 
 
-guardian_call <- function(q=NULL,orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to_date = Sys.Date(), from_date=Sys.Date()-7,loop=FALSE){
+guardian_call <- function(search_term=NULL,orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to_date = Sys.Date(), from_date=Sys.Date()-7,loop=FALSE){
   api_key<-Sys.getenv("GUARDIAN_API_KEY")
   orderby <- paste0("order-by=",orderby,"&")
   page_size <- paste0("page-size=",page_size,"&")
   from_date <- paste0("from-date=",from_date,"&")
   to_date <- paste0("to-date=",to_date,"&")
-  query <- ifelse(!is.null(q),paste0("q='",q,"'&"),"")
+  query <- ifelse(!is.null(search_term),paste0("q='",search_term,"'&"),"")
 
   if(loop==FALSE){
     page <- paste0("page=",page_numbers,"&")
@@ -95,7 +95,7 @@ guardian_call <- function(q=NULL,orderby = "newest" ,page_numbers = 1 ,page_size
 ##' @export
 ##'
 ##'
-##' @param q A character string containing the query term.
+##' @param search_term A character string containing the query term.
 ##' @param orderby A character string indicating how the results should be ordered.
 ##' @param page_numbers An integer vector indicating the page numbers to retrieve.
 ##' @param page_size An integer indicating the number of results per page.
@@ -113,8 +113,8 @@ guardian_call <- function(q=NULL,orderby = "newest" ,page_numbers = 1 ,page_size
 
 
 
-full_guardian_call <- function(q=NULL,orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to_date = Sys.Date(), from_date=Sys.Date()-7,loop=FALSE){
-  df <- guardian_call(q,orderby,page_numbers,page_size,to_date,from_date,loop)
+full_guardian_call <- function(search_term=NULL,orderby = "newest" ,page_numbers = 1 ,page_size=10 ,to_date = Sys.Date(), from_date=Sys.Date()-7,loop=FALSE){
+  df <- guardian_call(search_term,orderby,page_numbers,page_size,to_date,from_date,loop)
   articals <-data.frame()
 
   for(link in 1:nrow(df)){

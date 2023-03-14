@@ -7,7 +7,7 @@ key = NULL
 ##'
 ##'
 ##'
-##' @return if you are authentication
+##' @return if you are you have set you API key or not
 ##' @author Yassin Abdelhady
 ##' @export
 ##'
@@ -16,8 +16,13 @@ key = NULL
 
 auth_me <- function(){
   key <- Sys.getenv("GUARDIAN_API_KEY")
-  assertthat::assert_that(!missing(key), msg = "Sign Up for an API key here https://open-platform.theguardian.com/access then use the function guardian_key('') to set your API Key ")
-  print("You have your API Key set")
+  if (key==""){
+    "Sign Up for an API key here https://open-platform.theguardian.com/access then use the function guardian_key('insert_your_token_here') to set your API Key"
+  }else if(!key==""){
+    print("You have your API Key set")
+  }
+  # assertthat::assert_that(!missing(key), msg = "Sign Up for an API key here https://open-platform.theguardian.com/access then use the function guardian_key('') to set your API Key ")
+  # print("You have your API Key set")
 }
 
 ##' The Guardian API key
@@ -36,8 +41,15 @@ auth_me <- function(){
 
 show_my_key <- function(){
   key <- Sys.getenv("GUARDIAN_API_KEY")
-  assertthat::assert_that(!missing(key), msg = "Sign Up for an API key her then use the function guardian_key('') to set your API Key ")
-  print(key)
+  if (key==""){
+    "Sign Up for an API key here https://open-platform.theguardian.com/access then use the function guardian_key('insert_your_token_here') to set your API Key"
+  }else if(!key==""){
+    # print("You have your API Key set")
+    print(key)
+  }
+
+  # assertthat::assert_that(!missing(key), msg = "Sign Up for an API key her then use the function guardian_key('') to set your API Key ")
+  # print(key)
 }
 
 
@@ -58,7 +70,7 @@ show_my_key <- function(){
 
 # api_key <- paste("api-key=",rjson::fromJSON(file ="../credentials/theguardiankey.json")$api_key,sep="")
 guardian_key <- function(key){
-  assertthat::assert_that(!missing(key), msg = "Missing key")
+  assertthat::assert_that(!missing(key), msg = "Missing key check auth_me()")
   Sys.setenv(GUARDIAN_API_KEY = paste0("api-key=",key))
 }
 

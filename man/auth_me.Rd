@@ -7,7 +7,7 @@
 auth_me()
 }
 \value{
-if you are authentication
+if you are you have set you API key or not
 }
 \description{
 This function check if you are authorized or not

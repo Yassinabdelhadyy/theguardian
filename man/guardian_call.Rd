@@ -5,7 +5,7 @@
 \title{The Guardian call}
 \usage{
 guardian_call(
-  q = NULL,
+  search_term = NULL,
   orderby = "newest",
   page_numbers = 1,
   page_size = 10,
@@ -15,7 +15,7 @@ guardian_call(
 )
 }
 \arguments{
-\item{q}{A character string containing the query term.}
+\item{search_term}{A character string containing the query term.}
 
 \item{orderby}{A character string indicating how the results should be ordered.}
 
