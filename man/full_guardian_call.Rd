@@ -38,7 +38,7 @@ This function retrieve the data from the guardian API plus the body and the tags
 \examples{
 
 \dontrun{
-  full_guardian_call()
+  full_guardian_call(search_term = "football")
 }
 }
 \author{

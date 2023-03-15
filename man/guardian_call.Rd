@@ -38,7 +38,7 @@ This function retrieve the data from the guardian API
 \examples{
 
 \dontrun{
-  guardian_call()
+  guardian_call(search_term = "football")
 }
 }
 \author{

@@ -23,7 +23,7 @@ base_link<-"https://content.guardianapis.com/search?"
 ##' @examples
 ##'
 ##' \dontrun{
-##'   guardian_call()
+##'   guardian_call(search_term = "football")
 ##' }
 
 
@@ -108,7 +108,7 @@ guardian_call <- function(search_term=NULL,orderby = "newest" ,page_numbers = 1 
 ##' @examples
 ##'
 ##' \dontrun{
-##'   full_guardian_call()
+##'   full_guardian_call(search_term = "football")
 ##' }
 
 
@@ -167,15 +167,17 @@ full_guardian_call <- function(search_term=NULL,orderby = "newest" ,page_numbers
 ##' @examples
 ##'
 ##' \dontrun{
-##'   guardian_call_by_date()
+##'   guardian_call_by_date(date = "2023-03-10")
 ##' }
 
 
 guardian_call_by_date <- function(date = Sys.Date()){
+  # fetching the API Key
   api_key<-Sys.getenv("GUARDIAN_API_KEY")
+  # getting the date from the function
   from_date <- paste0("from-date=",date,"&")
   to_date <- paste0("to-date=",date,"&")
-
+  # creating the first link to get API output details
   theguardian <- paste0(base_link,to_date,from_date,api_key)
 
   text <- rvest::read_html(theguardian)|>
@@ -184,7 +186,9 @@ guardian_call_by_date <- function(date = Sys.Date()){
     rvest::html_text2()
   #transforming the page from text to json format
   js <- jsonlite::fromJSON(text, simplifyDataFrame = TRUE)
+  # getting the total results given by the API
   results <- js$response$total
+  # creating a vectors for the page lenghth and page size to be able to loop later
   if (results>200){
   page_size <- c(rep(200,floor(results/200)),results-((floor(results/200))*200))
   pages <- length(page_size)
@@ -193,8 +197,9 @@ guardian_call_by_date <- function(date = Sys.Date()){
     pages <- length(page_size)
 
   }
-
+  # empty data frame to append the results of the loop
   df2 <- data.frame()
+  # looping over the pages and each page the size of the results
   for (page in 1:pages){
     page_sz <- paste0("page-size=",page_size[page],"&")
     page_nm <- paste0("page=",page,"&")
@@ -213,11 +218,8 @@ guardian_call_by_date <- function(date = Sys.Date()){
         tidyr::separate(webPublicationDate,sep="T",c("PublicationDate","PublicationTime"))|>
         dplyr::mutate(PublicationDate = as.Date(PublicationDate),PublicationTime= substr(PublicationTime,0,5))
     df2 <- rbind(df2,df)
-
   }
-
     return(df2)
-
 }
 
 
@@ -239,12 +241,13 @@ guardian_call_by_date <- function(date = Sys.Date()){
 ##' @examples
 ##'
 ##' \dontrun{
-##'   full_guardian_call_by_date()
+##'   full_guardian_call_by_date(date="2023-03-10")
 ##' }
 
 
 
 full_guardian_call_by_date <- function(date = Sys.Date()){
+  # reusing the guardian_call_by_date() to fetch the API data and search each link to get the article body and auther and tags
   df <- guardian_call_by_date(date)
   articals <-data.frame()
 

@@ -1,19 +1,18 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# theguardian
+# The Guardian
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/Yassinabdelhadyy/theguardian/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/Yassinabdelhadyy/theguardian/actions/workflows/check-standard.yaml)
+
 <!-- badges: end -->
 
-The goal of theguardian is to get all the info from The Guardian news paper API with ease
+The goal of theguardian is to get all the info from The Guardian news paper API with ease. There are 2 main concepts in the package - To get the basic api data that the guardian provide- To get the basic api data that the guardian provide and scrape the body of each article and the author name and tags But first before running the calls you need to check if your API Key is set.. you can check that by auth_me() if not you will have a link so you can go and apply for an API Key, the key will be send on your email. Once you receive you API Key you can use it in guardian_key("Inset your API Key"). Finally you are all set now you can use the package easily with any of the functions.
 
 ## Installation
 
-You can install the development version of theguardian from
-[GitHub](https://github.com/) with:
+You can install the development version of theguardian from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
@@ -26,8 +25,5 @@ This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(theguardian)
-## basic example code
+## ?theguardian
 ```
-
-
-

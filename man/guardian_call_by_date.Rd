@@ -18,7 +18,7 @@ This function retrieve the data from the guardian API using a specific date
 \examples{
 
 \dontrun{
-  guardian_call_by_date()
+  guardian_call_by_date(date = "2023-03-10")
 }
 }
 \author{
