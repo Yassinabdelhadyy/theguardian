@@ -149,3 +149,133 @@ full_guardian_call <- function(search_term=NULL,orderby = "newest" ,page_numbers
   return(df2)
 }
 
+
+##' The Guardian call
+##'
+##' This function retrieve the data from the guardian API using a specific date
+##'
+##'
+##'
+##' @return the data from the guardian
+##' @author Yassin Abdelhady
+##' @export
+##'
+##'
+##' @param date A character string indicating the date for articles to retrieve.DEFAULT today date
+##'
+##'
+##' @examples
+##'
+##' \dontrun{
+##'   guardian_call_by_date()
+##' }
+
+
+guardian_call_by_date <- function(date = Sys.Date()){
+  api_key<-Sys.getenv("GUARDIAN_API_KEY")
+  from_date <- paste0("from-date=",date,"&")
+  to_date <- paste0("to-date=",date,"&")
+
+  theguardian <- paste0(base_link,to_date,from_date,api_key)
+
+  text <- rvest::read_html(theguardian)|>
+    rvest::html_element("body")|>
+    rvest::html_element("p")|>
+    rvest::html_text2()
+  #transforming the page from text to json format
+  js <- jsonlite::fromJSON(text, simplifyDataFrame = TRUE)
+  results <- js$response$total
+  if (results>200){
+  page_size <- c(rep(200,floor(results/200)),results-((floor(results/200))*200))
+  pages <- length(page_size)
+  }else if(results<200){
+    page_size <-c(results)
+    pages <- length(page_size)
+
+  }
+
+  df2 <- data.frame()
+  for (page in 1:pages){
+    page_sz <- paste0("page-size=",page_size[page],"&")
+    page_nm <- paste0("page=",page,"&")
+    theguardian <- paste0(base_link,to_date,from_date,page_sz,page_nm,api_key)
+    text <- rvest::read_html(theguardian)|>
+        rvest::html_element("body")|>
+        rvest::html_element("p")|>
+        rvest::html_text2()
+    #transforming the page from text to json format
+    js <- jsonlite::fromJSON(text, simplifyDataFrame = TRUE)
+    #adding the result into a data frame
+    df <- data.frame(js$response)
+    #removing results. from the column names
+    colnames(df) <- stringr::str_replace_all(colnames(df),"results.","")
+    df <- df|>
+        tidyr::separate(webPublicationDate,sep="T",c("PublicationDate","PublicationTime"))|>
+        dplyr::mutate(PublicationDate = as.Date(PublicationDate),PublicationTime= substr(PublicationTime,0,5))
+    df2 <- rbind(df2,df)
+
+  }
+
+    return(df2)
+
+}
+
+
+##' The Guardian call
+##'
+##' This function retrieve the data from the guardian API using a specific date plus the body and the tags of the article
+##'
+##'
+##'
+##' @return the full data from the guardian
+##' @author Yassin Abdelhady
+##' @export
+##'
+##'
+##' @param date A character string indicating the date for articles to retrieve.DEFAULT today date
+##'
+##'
+##'
+##' @examples
+##'
+##' \dontrun{
+##'   full_guardian_call_by_date()
+##' }
+
+
+
+full_guardian_call_by_date <- function(date = Sys.Date()){
+  df <- guardian_call_by_date(date)
+  articals <-data.frame()
+
+  for(link in 1:nrow(df)){
+    #article link
+    article_link <- df$webUrl[link]
+    #reading html page of the article
+    html_artical <- rvest::read_html(article_link)
+    #article subtitle
+    subtitle<-html_artical|>
+      rvest::html_element("p")|>
+      rvest::html_text2()
+    #article author
+    author<-html_artical|>
+      rvest::html_element("address")|>
+      rvest::html_text2()
+    #article body
+    body<-html_artical|>
+      rvest::html_element(".dcr-i7zira")|>
+      rvest::html_text2()
+    #tags of the article
+    tags<-html_artical|>
+      rvest::html_element(".dcr-1nx1rmt")|>
+      rvest::html_text2()
+    tags<-stringr::str_replace_all(tags,"\\n",", ")
+
+    #appending all the results into the data frame
+    articals <- rbind(articals,data.frame(webUrl = article_link,author = author,SubTitle = subtitle,article_text = body,tags= tags))
+  }
+  df2 <- df|>
+    dplyr::left_join(articals,by = "webUrl")
+
+  return(df2)
+}

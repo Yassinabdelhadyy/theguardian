@@ -2,6 +2,8 @@
 
 export(auth_me)
 export(full_guardian_call)
+export(full_guardian_call_by_date)
 export(guardian_call)
+export(guardian_call_by_date)
 export(guardian_key)
 export(show_my_key)
