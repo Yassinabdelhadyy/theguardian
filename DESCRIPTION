@@ -1,6 +1,6 @@
 Package: theguardian
 Title: The Guardian API
-Version: 0.1.01
+Version: 0.1.02
 Authors@R: 
     person("Yassin", "Abdelhady", , "yassinabdelhady@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
